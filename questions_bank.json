@@ -1,0 +1,162 @@
+[
+  {
+    "id": 1,
+    "subject": "Indian Polity",
+    "question": "Which Article of the Indian Constitution provides for the Election Commission of India?",
+    "options": ["Article 324", "Article 312", "Article 280", "Article 356"],
+    "correct_option_id": 0,
+    "explanation": "Article 324 provides for the superintendence, direction, and control of elections to be vested in an Election Commission."
+  },
+  {
+    "id": 2,
+    "subject": "Indian Polity",
+    "question": "Under which Constitutional Amendment Act was the voting age reduced from 21 years to 18 years in India?",
+    "options": ["42nd Amendment Act", "44th Amendment Act", "61st Amendment Act", "73rd Amendment Act"],
+    "correct_option_id": 2,
+    "explanation": "The 61st Constitutional Amendment Act, 1988 reduced the voting age for Lok Sabha and Legislative Assemblies from 21 to 18 years."
+  },
+  {
+    "id": 3,
+    "subject": "Indian History",
+    "question": "Who was the Viceroy of India when the Indian National Congress (INC) was established in 1885?",
+    "options": ["Lord Curzon", "Lord Dufferin", "Lord Ripon", "Lord Lytton"],
+    "correct_option_id": 1,
+    "explanation": "Lord Dufferin was the Viceroy of India from 1884 to 1888 when INC was founded by A.O. Hume in December 1885 in Bombay."
+  },
+  {
+    "id": 4,
+    "subject": "Indian History",
+    "question": "At which session of the Indian National Congress was the resolution of 'Poorna Swaraj' (Complete Independence) passed?",
+    "options": ["1920 Nagpur Session", "1924 Belgaum Session", "1929 Lahore Session", "1931 Karachi Session"],
+    "correct_option_id": 2,
+    "explanation": "In December 1929 at the Lahore Session presided over by Jawaharlal Nehru, INC passed the historic Poorna Swaraj resolution."
+  },
+  {
+    "id": 5,
+    "subject": "Geography",
+    "question": "Which river is often referred to as 'Dakshin Ganga' or 'Ganges of the South'?",
+    "options": ["Krishna", "Godavari", "Cauvery", "Mahanadi"],
+    "correct_option_id": 1,
+    "explanation": "Godavari is known as Dakshin Ganga due to its large basin and length (1465 km), being the second longest river in India."
+  },
+  {
+    "id": 6,
+    "subject": "Geography",
+    "question": "The 10 Degree Channel separates which of the following islands?",
+    "options": ["North Andaman and Middle Andaman", "Little Andaman and Car Nicobar", "Minicoy and Maldives", "Daman and Diu"],
+    "correct_option_id": 1,
+    "explanation": "The 10 Degree Channel lies in the Bay of Bengal and separates the Andaman Islands from the Nicobar Islands (Little Andaman and Car Nicobar)."
+  },
+  {
+    "id": 7,
+    "subject": "Indian Economy",
+    "question": "What is the primary indicator used by the Reserve Bank of India (RBI) to measure headline inflation?",
+    "options": ["Wholesale Price Index (WPI)", "Consumer Price Index (CPI) Combined", "Gross Domestic Product Deflator", "Index of Industrial Production (IIP)"],
+    "correct_option_id": 1,
+    "explanation": "Following the Urjit Patel committee recommendations in 2014, RBI adopted CPI (Combined) as its key headline inflation gauge."
+  },
+  {
+    "id": 8,
+    "subject": "Indian Economy",
+    "question": "Which five-year plan in India was based on the Mahalanobis Model?",
+    "options": ["First Five-Year Plan", "Second Five-Year Plan", "Third Five-Year Plan", "Fifth Five-Year Plan"],
+    "correct_option_id": 1,
+    "explanation": "The Second Five-Year Plan (1956-1961) was based on the P.C. Mahalanobis Model focusing on rapid industrialization and heavy industries."
+  },
+  {
+    "id": 9,
+    "subject": "General Science - Physics",
+    "question": "What is the SI unit of electric resistance?",
+    "options": ["Ampere", "Volt", "Ohm", "Watt"],
+    "correct_option_id": 2,
+    "explanation": "The SI unit of electrical resistance is the Ohm (represented by Greek letter Ω), named after German physicist Georg Simon Ohm."
+  },
+  {
+    "id": 10,
+    "subject": "General Science - Physics",
+    "question": "Which phenomenon of light is primarily responsible for the sparkling of diamonds?",
+    "options": ["Refraction", "Total Internal Reflection", "Dispersion", "Interference"],
+    "correct_option_id": 1,
+    "explanation": "The critical angle for diamond-air interface is small (approx 24.4°), causing multiple total internal reflections of light."
+  },
+  {
+    "id": 11,
+    "subject": "General Science - Chemistry",
+    "question": "Which gas is commonly known as 'Laughing Gas'?",
+    "options": ["Nitrous Oxide (N2O)", "Nitric Oxide (NO)", "Nitrogen Dioxide (NO2)", "Sulphur Dioxide (SO2)"],
+    "correct_option_id": 0,
+    "explanation": "Nitrous oxide (N2O) is an oxide of nitrogen known as laughing gas, used as an anesthetic and analgesic."
+  },
+  {
+    "id": 12,
+    "subject": "General Science - Biology",
+    "question": "Which organelle in a plant and animal cell is known as the 'Powerhouse of the Cell'?",
+    "options": ["Ribosome", "Mitochondria", "Golgi Apparatus", "Endoplasmic Reticulum"],
+    "correct_option_id": 1,
+    "explanation": "Mitochondria generate most of the chemical energy needed to power the cell's biochemical reactions, stored as ATP."
+  },
+  {
+    "id": 13,
+    "subject": "General Science - Biology",
+    "question": "Deficiency of Vitamin C leads to which of the following diseases?",
+    "options": ["Rickets", "Beriberi", "Scurvy", "Night Blindness"],
+    "correct_option_id": 2,
+    "explanation": "Vitamin C (ascorbic acid) deficiency causes Scurvy, characterized by bleeding gums, weakness, and skin spots."
+  },
+  {
+    "id": 14,
+    "subject": "Quantitative Aptitude",
+    "question": "If a train 150 meters long is running at 54 km/h, how much time will it take to pass an electric pole?",
+    "options": ["8 seconds", "10 seconds", "12 seconds", "15 seconds"],
+    "correct_option_id": 1,
+    "explanation": "Speed = 54 * (5/18) = 15 m/s. Time to cross pole = Length / Speed = 150 / 15 = 10 seconds."
+  },
+  {
+    "id": 15,
+    "subject": "Quantitative Aptitude",
+    "question": "A shopkeeper sells an article for Rs. 840 making a profit of 20%. What was the cost price of the article?",
+    "options": ["Rs. 680", "Rs. 700", "Rs. 720", "Rs. 750"],
+    "correct_option_id": 1,
+    "explanation": "Selling Price = CP * 1.20 => CP = 840 / 1.20 = Rs. 700."
+  },
+  {
+    "id": 16,
+    "subject": "Logical Reasoning",
+    "question": "Find the missing number in the series: 3, 7, 15, 31, 63, ?",
+    "options": ["120", "125", "127", "131"],
+    "correct_option_id": 2,
+    "explanation": "The pattern is (number * 2) + 1: 3*2+1=7, 7*2+1=15, 15*2+1=31, 31*2+1=63, 63*2+1=127."
+  },
+  {
+    "id": 17,
+    "subject": "Logical Reasoning",
+    "question": "Pointing to a photograph, Ramesh said, 'She is the daughter of my grandfather's only son.' How is the girl related to Ramesh?",
+    "options": ["Mother", "Sister", "Cousin", "Aunt"],
+    "correct_option_id": 1,
+    "explanation": "Grandfather's only son = Ramesh's father. Daughter of father = Ramesh's sister."
+  },
+  {
+    "id": 18,
+    "subject": "English Language",
+    "question": "Choose the most appropriate synonym for the word 'CANDID':",
+    "options": ["Deceptive", "Frank", "Reserved", "Cautious"],
+    "correct_option_id": 1,
+    "explanation": "'Candid' means truthful, straightforward, and sincere; hence 'Frank' is the exact synonym."
+  },
+  {
+    "id": 19,
+    "subject": "English Language",
+    "question": "Identify the correct meaning of the idiom: 'To spill the beans'",
+    "options": ["To drop food accidentally", "To reveal a secret prematurely", "To spoil a plan", "To make a great bargain"],
+    "correct_option_id": 1,
+    "explanation": "'To spill the beans' is an English idiom meaning to disclose a secret or confidential information prematurely."
+  },
+  {
+    "id": 20,
+    "subject": "Current Affairs & Static GK",
+    "question": "Where is the headquarters of ISRO (Indian Space Research Organisation) located?",
+    "options": ["Sriharikota", "Bengaluru", "Thiruvananthapuram", "New Delhi"],
+    "correct_option_id": 1,
+    "explanation": "ISRO's official headquarters is located in Antariksh Bhavan, Bengaluru, Karnataka."
+  }
+]
