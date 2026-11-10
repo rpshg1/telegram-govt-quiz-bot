@@ -20,16 +20,12 @@ def get_current_slot() -> str:
     """
     Check if current Indian Standard Time (IST = UTC + 5:30)
     falls within the allowed quiz posting windows.
-    Returns slot string like '2026-11-10_afternoon', or 'force' if bypassed, or '' if blocked.
+    Returns slot string like '2026-11-10_afternoon', or 'manual_...' if forced, or '' if blocked.
     """
     ist_tz = datetime.timezone(datetime.timedelta(hours=5, minutes=30))
     now = datetime.datetime.now(ist_tz)
     date_str = now.strftime("%Y-%m-%d")
     cur_mins = now.hour * 60 + now.minute
-
-    if "--force" in sys.argv or os.getenv("FORCE_RUN", "").lower() in ("true", "1"):
-        print("[TIME CHECK] Force run flag detected. Skipping time window check.")
-        return f"{date_str}_manual_{now.strftime('%H%M')}"
 
     # Windows in minutes from midnight (IST):
     # 1) Afternoon: 12:15 PM (735 min) to 1:30 PM (810 min)   [Target 12:30 PM]
@@ -45,6 +41,10 @@ def get_current_slot() -> str:
         if start_m <= cur_mins <= end_m:
             print(f"[TIME CHECK] Current IST time {now.strftime('%I:%M %p')} is within valid window: {name}")
             return f"{date_str}_{slot_key}"
+
+    if "--force" in sys.argv or os.getenv("FORCE_RUN", "").lower() in ("true", "1"):
+        print("[TIME CHECK] Force run flag detected outside standard windows. Running manually.")
+        return f"{date_str}_manual_{now.strftime('%H%M')}"
 
     print(f"\n==================================================")
     print(f"[BLOCKED] Current time is {now.strftime('%I:%M %p')} IST.")
