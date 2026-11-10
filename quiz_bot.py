@@ -16,42 +16,42 @@ CONFIG_FILE = os.path.join(os.path.dirname(__file__), "config.json")
 HISTORY_FILE = os.path.join(os.path.dirname(__file__), "quiz_history.json")
 QUESTIONS_FILE = os.path.join(os.path.dirname(__file__), "questions_bank.json")
 
-def is_within_allowed_window() -> bool:
+def get_current_slot() -> str:
     """
     Check if current Indian Standard Time (IST = UTC + 5:30)
     falls within the allowed quiz posting windows.
-    Prevents severely delayed cloud cron runs from firing at 3 AM or middle of the night!
+    Returns slot string like '2026-11-10_afternoon', or 'force' if bypassed, or '' if blocked.
     """
-    if "--force" in sys.argv or os.getenv("FORCE_RUN", "").lower() in ("true", "1"):
-        print("[TIME CHECK] Force run flag detected. Skipping time window check.")
-        return True
-
-    # Indian Standard Time (UTC + 5:30)
     ist_tz = datetime.timezone(datetime.timedelta(hours=5, minutes=30))
     now = datetime.datetime.now(ist_tz)
+    date_str = now.strftime("%Y-%m-%d")
     cur_mins = now.hour * 60 + now.minute
 
+    if "--force" in sys.argv or os.getenv("FORCE_RUN", "").lower() in ("true", "1"):
+        print("[TIME CHECK] Force run flag detected. Skipping time window check.")
+        return f"{date_str}_manual_{now.strftime('%H%M')}"
+
     # Windows in minutes from midnight (IST):
-    # 1) Afternoon: 12:15 PM (735 min) to 1:15 PM (795 min)  [Target 12:30 PM = 750 min]
-    # 2) Evening:   4:45 PM (1005 min) to 5:45 PM (1065 min) [Target 5:00 PM = 1020 min]
-    # 3) Night:     8:45 PM (1245 min) to 9:45 PM (1305 min) [Target 9:00 PM = 1260 min]
+    # 1) Afternoon: 12:15 PM (735 min) to 1:30 PM (810 min)   [Target 12:30 PM]
+    # 2) Evening:   4:45 PM (1005 min) to 6:00 PM (1080 min) [Target 5:00 PM]
+    # 3) Night:     8:45 PM (1245 min) to 10:00 PM (1320 min) [Target 9:00 PM]
     windows = [
-        (735, 795, "Afternoon Quiz (12:30 PM)"),
-        (1005, 1065, "Evening Quiz (5:00 PM)"),
-        (1245, 1305, "Night Revision Quiz (9:00 PM)")
+        (735, 810, "afternoon", "Afternoon Quiz (12:30 PM)"),
+        (1005, 1080, "evening", "Evening Quiz (5:00 PM)"),
+        (1245, 1320, "night", "Night Revision Quiz (9:00 PM)")
     ]
 
-    for start_m, end_m, name in windows:
+    for start_m, end_m, slot_key, name in windows:
         if start_m <= cur_mins <= end_m:
             print(f"[TIME CHECK] Current IST time {now.strftime('%I:%M %p')} is within valid window: {name}")
-            return True
+            return f"{date_str}_{slot_key}"
 
     print(f"\n==================================================")
     print(f"[BLOCKED] Current time is {now.strftime('%I:%M %p')} IST.")
     print(f"[BLOCKED] This is OUTSIDE the allowed quiz hours (12:30 PM, 5:00 PM, 9:00 PM).")
     print(f"[BLOCKED] Cloud cron was delayed by servers. Aborting immediately to prevent student disturbance.")
     print(f"==================================================")
-    return False
+    return ""
 
 def load_config() -> Dict[str, Any]:
     env_token = os.getenv("TELEGRAM_BOT_TOKEN")
@@ -85,16 +85,30 @@ def save_config(bot_token: str, channel_id: str, is_anonymous: bool = True):
     with open(CONFIG_FILE, "w", encoding="utf-8") as f:
         json.dump(config, f, indent=2)
 
-def load_history() -> List[int]:
+def load_history_data() -> Dict[str, Any]:
     if os.path.exists(HISTORY_FILE):
         with open(HISTORY_FILE, "r", encoding="utf-8") as f:
             data = json.load(f)
-            return data.get("sent_ids", [])
-    return []
+            return {
+                "sent_ids": data.get("sent_ids", []),
+                "completed_slots": data.get("completed_slots", [])
+            }
+    return {"sent_ids": [], "completed_slots": []}
 
-def save_history(sent_ids: List[int]):
+def load_history() -> List[int]:
+    return load_history_data()["sent_ids"]
+
+def save_history(sent_ids: List[int], completed_slots: List[str] = None):
+    if completed_slots is None:
+        completed_slots = load_history_data()["completed_slots"]
+    # Keep only last 60 slots to keep history compact
+    completed_slots = completed_slots[-60:]
     with open(HISTORY_FILE, "w", encoding="utf-8") as f:
-        json.dump({"sent_ids": sent_ids, "last_updated": time.strftime("%Y-%m-%d %H:%M:%S")}, f, indent=2)
+        json.dump({
+            "sent_ids": sent_ids,
+            "completed_slots": completed_slots,
+            "last_updated": time.strftime("%Y-%m-%d %H:%M:%S")
+        }, f, indent=2)
 
 def send_telegram_quiz(bot_token: str, channel_id: str, question_data: Dict[str, Any], is_anonymous: bool = False) -> bool:
     """
@@ -169,7 +183,16 @@ def get_10_daily_questions() -> List[Dict[str, Any]]:
 
 def run_daily_quiz_pipeline(dry_run: bool = False):
     # Enforce time window guardrail (avoids posting if cloud cron was delayed by hours)
-    if not is_within_allowed_window():
+    slot = get_current_slot()
+    if not slot:
+        return True
+
+    history_data = load_history_data()
+    sent_ids = history_data["sent_ids"]
+    completed_slots = history_data["completed_slots"]
+
+    if slot in completed_slots and not dry_run:
+        print(f"[SKIP] Slot '{slot}' has ALREADY been posted today. Preventing duplicate quiz!")
         return True
 
     config = load_config()
@@ -189,11 +212,11 @@ def run_daily_quiz_pipeline(dry_run: bool = False):
     print("  Daily Govt Exam Quiz - Telegram Bot Pipeline    ")
     print("==================================================")
     print(f"Target Channel : {channel_id if not dry_run else 'DRY-RUN (Simulated)'}")
+    print(f"Slot ID        : {slot}")
     print(f"Total Quizzes  : 10 Questions")
     print("--------------------------------------------------")
 
     questions = get_10_daily_questions()
-    sent_ids = load_history()
     success_count = 0
 
     for i, q in enumerate(questions, start=1):
@@ -213,7 +236,10 @@ def run_daily_quiz_pipeline(dry_run: bool = False):
                 sent_ids.append(q["id"])
             time.sleep(2)  # Avoid rate limit
 
-    save_history(sent_ids)
+    if not dry_run and success_count > 0:
+        if slot not in completed_slots:
+            completed_slots.append(slot)
+        save_history(sent_ids, completed_slots)
     print("\n--------------------------------------------------")
     print(f"Completed! {success_count}/10 Quizzes sent successfully.")
     print("==================================================")
