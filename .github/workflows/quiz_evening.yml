@@ -1,21 +1,16 @@
-name: Daily Govt Exam Quiz
+name: Evening Quiz (5:00 PM IST)
 
 on:
   schedule:
-    # 3 times daily (IST = UTC + 5:30):
-    # 1) Afternoon Quiz: 12:29 PM IST (06:59 UTC - avoids the top-of-hour 07:00 queue delay)
-    - cron: '59 6 * * *'
-    # 2) Evening Quiz: 5:00 PM IST (11:30 UTC)
-    - cron: '30 11 * * *'
-    # 3) Night Revision Quiz: 9:00 PM IST (15:30 UTC)
-    - cron: '30 15 * * *'
-  workflow_dispatch: # Allows manual run anytime from GitHub Actions tab
+    # 4:58 PM IST = 11:28 UTC (avoiding :30 congestion)
+    - cron: '28 11 * * *'
+  workflow_dispatch:
 
 jobs:
   post-quiz:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Needed to commit quiz_history.json back to repo
+      contents: write
 
     steps:
       - name: Checkout Repository
@@ -32,10 +27,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run Daily Quiz Pipeline
+      - name: Run Evening Quiz
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+          FORCE_RUN: ${{ github.event_name == 'workflow_dispatch' }}
         run: python quiz_bot.py
 
       - name: Commit Updated Quiz History
@@ -43,4 +39,4 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add quiz_history.json
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Update quiz history [skip ci]" && git push)
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update quiz history after evening run [skip ci]" && git push)

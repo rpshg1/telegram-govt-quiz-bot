@@ -3,6 +3,7 @@ import sys
 import json
 import time
 import random
+import datetime
 from typing import List, Dict, Any
 import requests
 
@@ -14,6 +15,43 @@ if sys.platform.startswith('win'):
 CONFIG_FILE = os.path.join(os.path.dirname(__file__), "config.json")
 HISTORY_FILE = os.path.join(os.path.dirname(__file__), "quiz_history.json")
 QUESTIONS_FILE = os.path.join(os.path.dirname(__file__), "questions_bank.json")
+
+def is_within_allowed_window() -> bool:
+    """
+    Check if current Indian Standard Time (IST = UTC + 5:30)
+    falls within the allowed quiz posting windows.
+    Prevents severely delayed cloud cron runs from firing at 3 AM or middle of the night!
+    """
+    if "--force" in sys.argv or os.getenv("FORCE_RUN", "").lower() in ("true", "1"):
+        print("[TIME CHECK] Force run flag detected. Skipping time window check.")
+        return True
+
+    # Indian Standard Time (UTC + 5:30)
+    ist_tz = datetime.timezone(datetime.timedelta(hours=5, minutes=30))
+    now = datetime.datetime.now(ist_tz)
+    cur_mins = now.hour * 60 + now.minute
+
+    # Windows in minutes from midnight (IST):
+    # 1) Afternoon: 12:15 PM (735 min) to 1:15 PM (795 min)  [Target 12:30 PM = 750 min]
+    # 2) Evening:   4:45 PM (1005 min) to 5:45 PM (1065 min) [Target 5:00 PM = 1020 min]
+    # 3) Night:     8:45 PM (1245 min) to 9:45 PM (1305 min) [Target 9:00 PM = 1260 min]
+    windows = [
+        (735, 795, "Afternoon Quiz (12:30 PM)"),
+        (1005, 1065, "Evening Quiz (5:00 PM)"),
+        (1245, 1305, "Night Revision Quiz (9:00 PM)")
+    ]
+
+    for start_m, end_m, name in windows:
+        if start_m <= cur_mins <= end_m:
+            print(f"[TIME CHECK] Current IST time {now.strftime('%I:%M %p')} is within valid window: {name}")
+            return True
+
+    print(f"\n==================================================")
+    print(f"[BLOCKED] Current time is {now.strftime('%I:%M %p')} IST.")
+    print(f"[BLOCKED] This is OUTSIDE the allowed quiz hours (12:30 PM, 5:00 PM, 9:00 PM).")
+    print(f"[BLOCKED] Cloud cron was delayed by servers. Aborting immediately to prevent student disturbance.")
+    print(f"==================================================")
+    return False
 
 def load_config() -> Dict[str, Any]:
     env_token = os.getenv("TELEGRAM_BOT_TOKEN")
@@ -130,6 +168,10 @@ def get_10_daily_questions() -> List[Dict[str, Any]]:
     return selected
 
 def run_daily_quiz_pipeline(dry_run: bool = False):
+    # Enforce time window guardrail (avoids posting if cloud cron was delayed by hours)
+    if not is_within_allowed_window():
+        return True
+
     config = load_config()
     bot_token = config.get("bot_token")
     channel_id = config.get("channel_id")
